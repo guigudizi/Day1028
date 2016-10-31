@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.administrator.day1028.activities.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/main_frm1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </FrameLayout>
+
+    <RadioGroup
+        android:id="@+id/main_rg1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ccc"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/main_rbt0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="true"
+            android:drawableTop="@drawable/home_selector"
+            android:gravity="center"
+            android:text="首页"
+            android:textColor="@color/fontcolor"/>
+
+        <RadioButton
+            android:id="@+id/main_rbt1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/gov_selector"
+            android:gravity="center"
+            android:text="热点"
+            android:textColor="@color/fontcolor"/>
+
+        <RadioButton
+            android:id="@+id/main_rbt2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/smartservice_selector"
+            android:gravity="center"
+            android:text="收藏"
+            android:textColor="@color/fontcolor"/>
+
+        <RadioButton
+            android:id="@+id/main_rbt3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/setting_selector"
+            android:gravity="center"
+            android:text="我的"
+            android:textColor="@color/fontcolor"/>
+    </RadioGroup>
+
+</LinearLayout>

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.administrator.day1028.commom.CommonUrls;
 import com.example.administrator.day1028.entity.NetEase;
+import com.example.administrator.day1028.entity.NewsContent;
 import com.example.administrator.day1028.entity.NewsType;
 import com.google.gson.Gson;
 
@@ -81,8 +82,8 @@ public class Xhttp {
                 Log.d(TAG, "onSuccess" + result);
                 Gson gson = new Gson();
                 NewsType newsType = gson.fromJson(result, NewsType.class);
-                Log.d(TAG,newsType.tList.get(0).tname+"");
-                if(lis!=null){
+                Log.d(TAG, newsType.tList.get(0).tname + "");
+                if (lis != null) {
                     lis.onSuccess(newsType);
                 }
 
@@ -101,15 +102,80 @@ public class Xhttp {
             @Override
             public void onFinished() {
                 Log.d(TAG, "onFinished");
-                if(lis!=null){
+                if (lis != null) {
                     lis.onFinish();
                 }
             }
         };
         x.http().get(en, cl);
     }
-    public static interface NewsTypeListener{
+
+    public static interface NewsTypeListener {
         void onSuccess(NewsType newsType);
+
         void onFinish();
+    }
+
+    public static void getNewsContent(final String docId, final NewsContentListener listener) {
+
+        RequestParams entity = new RequestParams(CommonUrls.getNewsContUrl(docId));
+        Callback.CommonCallback<String> callback = new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    String string = obj.getString(docId);
+                    Gson gson = new Gson();
+                    NewsContent newsContent = gson.fromJson(string, NewsContent.class);
+
+                    //从newsContent对象中把body和img集合重新整合一个让webview显示的string
+
+                    String before = "<p><img src=\"";
+                    String after = "\"/> </img></p>";
+                    //重整字符串：
+                    //1.添加标题；<p><h1>  </h1></p>
+                    String title_b = "<p><h2>";
+                    String title_a = "</h2></p>";
+
+                    newsContent.body = title_b + newsContent.title + title_a + newsContent.body;
+                    //添加作者：
+                    for (NewsContent.Img img : newsContent.img) {
+                        newsContent.body = newsContent.body.replace(img.ref, before + img.src + after);
+                    }
+
+                    //字符串交给webview
+                    if (listener != null) {
+                        listener.onFinish(newsContent.body);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "onSuccess解析异常: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "onError: ");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                Log.d(TAG, "onCancelled: ");
+            }
+
+            @Override
+            public void onFinished() {
+                Log.d(TAG, "onFinished: ");
+
+            }
+        };
+        x.http().get(entity, callback);
+
+    }
+
+    public interface NewsContentListener {
+        void onFinish(String str);
     }
 }

@@ -1,18 +1,18 @@
 package com.example.administrator.day1028.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.day1028.R;
 import com.example.administrator.day1028.adapters.NetEaseAdapter;
-import com.example.administrator.day1028.base.BaseFragment;
+import com.example.administrator.day1028.base.LazyBaseFragment;
 import com.example.administrator.day1028.biz.Xhttp;
 import com.example.administrator.day1028.commom.CommonUrls;
 import com.example.administrator.day1028.entity.NetEase;
@@ -23,6 +23,8 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -31,7 +33,7 @@ import butterknife.BindView;
  * Use the {@link NewsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, NetEaseAdapter.OnItemClickListener {
+public class NewsListFragment extends LazyBaseFragment implements SwipeRefreshLayout.OnRefreshListener, NetEaseAdapter.OnItemClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String KEY_TID = "key_tid";
@@ -45,7 +47,7 @@ public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout
 
 
     private OnFragmentInteractionListener mListener;
-    private RecyclerView.OnScrollListener lis=new RecyclerView.OnScrollListener() {
+    private RecyclerView.OnScrollListener lis = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -79,7 +81,7 @@ public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout
     };
     private NetEaseAdapter mNetEaseAdapter;
     private LinearLayoutManager layoutManager;
-    private Xhttp.OnSuccessListener listener=new Xhttp.OnSuccessListener() {
+    private Xhttp.OnSuccessListener listener = new Xhttp.OnSuccessListener() {
         @Override
         public void setNewsList(List<NetEase> neteaseNews) {
             mNetEaseAdapter = new NetEaseAdapter(neteaseNews);
@@ -99,6 +101,18 @@ public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout
 
     public NewsListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    protected boolean lazyLoad() {
+        Log.d(TAG, "lazyLoad: 加载数据");
+        //        mTvText.setText(tid + "------" + tname);
+        mSwipe1.setOnRefreshListener(this);
+        mRecyclerView1.addOnScrollListener(lis);
+        Xhttp.getNewsList(CommonUrls.getUrl(tid), tid, listener);
+        // Xhttp.getNewsList(url, "T1370583240249", listener);
+        return true;
+
     }
 
     @Override
@@ -133,16 +147,12 @@ public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout
             tid = getArguments().getString(KEY_TID);
             tname = getArguments().getString(KEY_TNAME);
         }
-        mHandler=new Handler();
+        mHandler = new Handler();
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -177,14 +187,23 @@ public class NewsListFragment extends BaseFragment implements SwipeRefreshLayout
         mHandler.postDelayed(runable, 2000);
     }
 
+    private NetEaseAdapter.OnItemClickListener onlistener;
+
     @Override
     public void onClick(int position) {
+        onButtonPressed(mNetEaseAdapter.getDataList().get(position).docid);
 
+    }
+
+    public void onButtonPressed(String docId) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(docId);
+        }
     }
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void onFragmentInteraction(String docId);
     }
 }

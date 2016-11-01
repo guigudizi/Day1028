@@ -18,4 +18,8 @@ public class CommonUrls {
     public static String getUrl(String tid) {
         return BASE_URL + "nc/article/list/" + tid + "/0-20.html";
     }
+
+    public static String getNewsContUrl(String docId){
+        return BASE_URL+"nc/article/"+docId+"/full.html";
+    }
 }

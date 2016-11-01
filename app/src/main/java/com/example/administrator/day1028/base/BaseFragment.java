@@ -22,15 +22,19 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutId(), null);
+
+        View rootView = inflater.inflate(getLayoutId(), null);
         //黄油刀绑定
-        ButterKnife.bind(this, view);
+        ButterKnife.bind(this, rootView);
         initData();//初始化数据
-        return view;
+
+
+        return rootView;
     }
 
     protected abstract void initData();
 
     protected abstract int getLayoutId();
+
 
 }
